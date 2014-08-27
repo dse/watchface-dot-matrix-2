@@ -1,0 +1,44 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "Darren Embry",
+    "longName": "Dot Matrix Watchface #1",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "characterRegex": "[0-9A-Z\\-\\:]",
+                "file": "fonts/PrintChar21.ttf",
+                "name": "FONT_PRINTCHAR_TWENTYONE_16",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9\\:]",
+                "file": "fonts/PRNumber3.ttf",
+                "name": "FONT_PR_NUMBER_THREE_48",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9A-Z\\-\\:]",
+                "file": "fonts/PRNumber3.ttf",
+                "name": "FONT_PR_NUMBER_THREE_32",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[\\ -\\~]",
+                "file": "fonts/perfect-dos-vga.ttf",
+                "name": "FONT_PERFECT_DOS_VGA_16",
+                "type": "font"
+            }
+        ]
+    },
+    "shortName": "Dot Matrix #1",
+    "uuid": "13d42c87-c835-40aa-855e-a883def03daa",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
