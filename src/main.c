@@ -90,7 +90,7 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_dow_font);
-  fonts_unload_custom_font(s_date_font);
+  //fonts_unload_custom_font(s_date_font);
   fonts_unload_custom_font(s_time_font);
 }
 
