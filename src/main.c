@@ -54,11 +54,13 @@ static void update_time() {
 }
 
 static void on_battery_state_change(BatteryChargeState charge) {
-  static char buffer[] = "100CP";
+  static char buffer[] = "100%CP";
   int l;
   
-  snprintf(buffer, sizeof(buffer) - 2, "%d", charge.charge_percent);
+  snprintf(buffer, sizeof(buffer), "%d", charge.charge_percent);
   l = strlen(buffer);
+  buffer[l++] = '%';
+  buffer[l] = '\0';
   if (charge.is_charging) {
     buffer[l++] = 'C';
     buffer[l] = '\0';
@@ -76,9 +78,10 @@ static void main_window_load(Window *window) {
 
   minute_when_last_updated = -1;
   
-  s_dow_layer  = text_layer_create(GRect(2, 35, 70, 20));
-  s_batt_layer = text_layer_create(GRect(72, 35, 70, 20));
-  s_date_layer = text_layer_create(GRect(2, 55, 140, 20));
+  /*                                     x   y   wid  ht */
+  s_dow_layer  = text_layer_create(GRect( 2, 35,  56, 20));
+  s_batt_layer = text_layer_create(GRect(58, 35,  84, 20));
+  s_date_layer = text_layer_create(GRect( 2, 55, 140, 20));
   if (clock_is_24h_style() == true) {
     s_time_layer = text_layer_create(GRect(2, 85, 140, 40));
   } else {
