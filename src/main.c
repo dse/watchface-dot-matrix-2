@@ -11,6 +11,8 @@ static GFont     s_dow_font;
 static GFont     s_date_font;
 static GFont     s_time_font;
 
+static int minute_when_last_updated;
+
 static void update_time() {
   unsigned int i;
   unsigned int j;
@@ -24,11 +26,13 @@ static void update_time() {
   /*                                     1 1 */
   /*                           0    5    0 2 */
   
-  strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
-  for (j = strlen(dow_buffer), i = 0; i < j; i += 1) {
-    dow_buffer[i] = (char)toupper((unsigned int)dow_buffer[i]);
+  if (minute_when_last_updated != tick_time->tm_min) {
+    strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
+    for (j = strlen(dow_buffer), i = 0; i < j; i += 1) {
+      dow_buffer[i] = (char)toupper((unsigned int)dow_buffer[i]);
+    }
+    strftime(date_buffer, sizeof(date_buffer), "%Y-%m-%d", tick_time);
   }
-  strftime(date_buffer, sizeof(date_buffer), "%Y-%m-%d", tick_time);
   
   if (clock_is_24h_style() == true) {
     strftime(time_buffer, sizeof(time_buffer), "%H:%M:%S", tick_time);
@@ -39,14 +43,18 @@ static void update_time() {
     time_buffer[11] = '\0';
   }
   
-  
-
-  text_layer_set_text(s_dow_layer,  dow_buffer);
-  text_layer_set_text(s_date_layer, date_buffer);
+  if (minute_when_last_updated != tick_time->tm_min) {
+    text_layer_set_text(s_dow_layer,  dow_buffer);
+    text_layer_set_text(s_date_layer, date_buffer);
+  }
   text_layer_set_text(s_time_layer, time_buffer);
+
+  minute_when_last_updated = tick_time->tim_min;
 }
 
 static void main_window_load(Window *window) {
+
+  minute_when_last_updated = -1;
   
   s_dow_layer  = text_layer_create(GRect(2, 35, 140, 20));
   s_date_layer = text_layer_create(GRect(2, 55, 140, 20));
