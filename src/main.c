@@ -59,7 +59,7 @@ static BatteryStateHandler on_battery_state_change(BatteryChargeState charge) {
   
   snprintf(buffer, sizeof(buffer) - 2, "%d", charge.charge_percent);
   l = strlen(buffer);
-  if (charge.is_charged) {
+  if (charge.is_charging) {
     buffer[l++] = 'C';
     buffer[l] = '\0';
   }
