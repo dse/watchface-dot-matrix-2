@@ -49,7 +49,7 @@ static void update_time() {
   }
   text_layer_set_text(s_time_layer, time_buffer);
 
-  minute_when_last_updated = tick_time->tim_min;
+  minute_when_last_updated = tick_time->tm_min;
 }
 
 static void main_window_load(Window *window) {
