@@ -4,6 +4,7 @@
 static Window    *s_main_window;
 
 static TextLayer *s_dow_layer;
+static TextLayer *s_batt_layer;
 static TextLayer *s_date_layer;
 static TextLayer *s_time_layer;
 
@@ -26,7 +27,8 @@ static void update_time() {
   /*                           0    5    0 2 */
   
   if (minute_when_last_updated != tick_time->tm_min) {
-    strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
+    // strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
+    strftime(dow_buffer,  sizeof(dow_buffer),  "%a.", tick_time);
     for (j = strlen(dow_buffer), i = 0; i < j; i += 1) {
       dow_buffer[i] = (char)toupper((unsigned int)dow_buffer[i]);
     }
@@ -51,11 +53,29 @@ static void update_time() {
   minute_when_last_updated = tick_time->tm_min;
 }
 
+static BatteryStateHandler on_battery_state_change(BatteryChargeState charge) {
+  static char buffer[] = "100CP";
+  int l;
+  
+  sprintf(buffer, "%d", charge.charge_percent);
+  l = strlen(buffer);
+  if (charge.is_charged) {
+    buffer[l++] = 'C';
+    buffer[l] = '\0';
+  }
+  if (charge.is_plugged) {
+    buffer[l++] = 'P';
+    buffer[l] = '\0';
+  }
+  text_layer_set_text(s_batt_layer, buffer);
+}
+
 static void main_window_load(Window *window) {
 
   minute_when_last_updated = -1;
   
-  s_dow_layer  = text_layer_create(GRect(2, 35, 140, 20));
+  s_dow_layer  = text_layer_create(GRect(2, 35, 70, 20));
+  s_batt_layer = text_layer_create(GRect(72, 35, 70, 20));
   s_date_layer = text_layer_create(GRect(2, 55, 140, 20));
   if (clock_is_24h_style() == true) {
     s_time_layer = text_layer_create(GRect(2, 85, 140, 40));
@@ -65,6 +85,8 @@ static void main_window_load(Window *window) {
 
   text_layer_set_background_color(s_dow_layer, GColorBlack);
   text_layer_set_text_color(s_dow_layer, GColorClear);
+  text_layer_set_background_color(s_batt_layer, GColorBlack);
+  text_layer_set_text_color(s_batt_layer, GColorClear);
   text_layer_set_background_color(s_date_layer, GColorBlack);
   text_layer_set_text_color(s_date_layer, GColorClear);
   text_layer_set_background_color(s_time_layer, GColorBlack);
@@ -77,22 +99,29 @@ static void main_window_load(Window *window) {
   s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
 
   text_layer_set_font(s_dow_layer,  s_small_font);
+  text_layer_set_font(s_batt_layer, s_small_font);
   text_layer_set_font(s_date_layer, s_small_font);
   text_layer_set_font(s_time_layer, s_large_font);
   
   text_layer_set_text_alignment(s_dow_layer, GTextAlignmentLeft);
+  text_layer_set_text_alignment(s_batt_layer, GTextAlignmentRight);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentLeft);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
 
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_dow_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_batt_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
 
   update_time();
+
+  battery_state_service_subscribe(on_battery_state_change);
 }
 
 static void main_window_unload(Window *window) {
+  battery_state_service_unsubscribe();
   text_layer_destroy(s_dow_layer);
+  text_layer_destroy(s_batt_layer);
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_time_layer);
   fonts_unload_custom_font(s_small_font);
