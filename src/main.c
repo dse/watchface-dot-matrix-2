@@ -53,7 +53,7 @@ static void update_time() {
   minute_when_last_updated = tick_time->tm_min;
 }
 
-static BatteryStateHandler on_battery_state_change(BatteryChargeState charge) {
+static void on_battery_state_change(BatteryChargeState charge) {
   static char buffer[] = "100CP";
   int l;
   
