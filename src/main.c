@@ -72,6 +72,8 @@ static void on_battery_state_change(BatteryChargeState charge) {
 
 static void main_window_load(Window *window) {
 
+  static BatteryChargeState battery_state;
+
   minute_when_last_updated = -1;
   
   s_dow_layer  = text_layer_create(GRect(2, 35, 70, 20));
@@ -115,6 +117,8 @@ static void main_window_load(Window *window) {
 
   update_time();
 
+  battery_state = battery_state_service_peek();
+  on_battery_state_change(battery_state);
   battery_state_service_subscribe(on_battery_state_change);
 }
 
