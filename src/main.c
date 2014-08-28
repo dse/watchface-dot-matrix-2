@@ -66,9 +66,9 @@ static void main_window_load(Window *window) {
   //text_layer_set_text(s_time_layer, "00:00");
   //text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
 
-  s_dow_font  = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PRINTCHAR_TWENTYONE_16));
+  s_dow_font  = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_16));
   s_date_font = s_dow_font;
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PR_NUMBER_THREE_32));
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
 
   text_layer_set_font(s_dow_layer,  s_dow_font);
   text_layer_set_font(s_date_layer, s_date_font);

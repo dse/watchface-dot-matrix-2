@@ -9,27 +9,15 @@
     "resources": {
         "media": [
             {
-                "characterRegex": "[0-9A-Z\\-\\:]",
-                "file": "fonts/PrintChar21.ttf",
-                "name": "FONT_PRINTCHAR_TWENTYONE_16",
+                "characterRegex": "[--:A-Z]",
+                "file": "fonts/DotMatrixNumberOne-Condensed.ttf",
+                "name": "FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32",
                 "type": "font"
             },
             {
-                "characterRegex": "[0-9\\:]",
-                "file": "fonts/PRNumber3.ttf",
-                "name": "FONT_PR_NUMBER_THREE_48",
-                "type": "font"
-            },
-            {
-                "characterRegex": "[0-9A-Z\\-\\:]",
-                "file": "fonts/PRNumber3.ttf",
-                "name": "FONT_PR_NUMBER_THREE_32",
-                "type": "font"
-            },
-            {
-                "characterRegex": "[\\ -\\~]",
-                "file": "fonts/perfect-dos-vga.ttf",
-                "name": "FONT_PERFECT_DOS_VGA_16",
+                "characterRegex": "[--:A-Z]",
+                "file": "fonts/DotMatrixNumberOne.ttf",
+                "name": "FONT_DOT_MATRIX_NUMBER_ONE_16",
                 "type": "font"
             }
         ]
