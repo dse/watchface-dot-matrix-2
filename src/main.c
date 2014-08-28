@@ -7,9 +7,8 @@ static TextLayer *s_dow_layer;
 static TextLayer *s_date_layer;
 static TextLayer *s_time_layer;
 
-static GFont     s_dow_font;
-static GFont     s_date_font;
-static GFont     s_time_font;
+static GFont     s_small_font;
+static GFont     s_large_font;
 
 static int minute_when_last_updated;
 
@@ -74,13 +73,12 @@ static void main_window_load(Window *window) {
   //text_layer_set_text(s_time_layer, "00:00");
   //text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
 
-  s_dow_font  = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_16));
-  s_date_font = s_dow_font;
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
+  s_small_font  = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_16));
+  s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
 
-  text_layer_set_font(s_dow_layer,  s_dow_font);
-  text_layer_set_font(s_date_layer, s_date_font);
-  text_layer_set_font(s_time_layer, s_time_font);
+  text_layer_set_font(s_dow_layer,  s_small_font);
+  text_layer_set_font(s_date_layer, s_small_font);
+  text_layer_set_font(s_time_layer, s_large_font);
   
   text_layer_set_text_alignment(s_dow_layer, GTextAlignmentLeft);
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentLeft);
@@ -97,9 +95,8 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_dow_layer);
   text_layer_destroy(s_date_layer);
   text_layer_destroy(s_time_layer);
-  fonts_unload_custom_font(s_dow_font);
-  //fonts_unload_custom_font(s_date_font);
-  fonts_unload_custom_font(s_time_font);
+  fonts_unload_custom_font(s_small_font);
+  fonts_unload_custom_font(s_large_font);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
