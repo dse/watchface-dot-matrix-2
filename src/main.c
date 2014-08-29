@@ -53,18 +53,17 @@ static void update_time() {
 }
 
 static void on_battery_state_change(BatteryChargeState charge) {
-  static char buffer[] = "100%CP";
+  static char buffer[] = "++++++++++";
   int l;
   
-  snprintf(buffer, sizeof(buffer) - 2, "%d%%", charge.charge_percent);
-  l = strlen(buffer);
+  snprintf(buffer, sizeof(buffer), "%d%%", charge.charge_percent);
   if (charge.is_charging) {
-    buffer[l++] = 'C';
-    buffer[l] = '\0';
+    l = strlen(buffer);
+    strncpy(buffer + l, " CH", sizeof(buffer) - l);
   }
   if (charge.is_plugged) {
-    buffer[l++] = 'P';
-    buffer[l] = '\0';
+    l = strlen(buffer);
+    strncpy(buffer + l, " PL", sizeof(buffer) - l);
   }
   text_layer_set_text(s_batt_layer, buffer);
 }
