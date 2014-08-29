@@ -22,19 +22,18 @@ static void update_time() {
 
   static char dow_buffer[]  = "WEDNESDAY";
   static char date_buffer[] = "2014-01-01";
-  static char time_buffer[] = "23:25:32 p.m.";
-  /*                                     1 1 */
-  /*                           0    5    0 2 */
-  
+  static char time_buffer[] = "23:25:32 p.m."; /* room for strftime() */
+  /*                          [          1 1] */
+  /*                          [0    5    0 2] */
+
   if (minute_when_last_updated != tick_time->tm_min) {
-    // strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
-    strftime(dow_buffer,  sizeof(dow_buffer),  "%a.", tick_time);
+    strftime(dow_buffer,  sizeof(dow_buffer),  "%A", tick_time);
     for (j = strlen(dow_buffer), i = 0; i < j; i += 1) {
       dow_buffer[i] = (char)toupper((unsigned int)dow_buffer[i]);
     }
     strftime(date_buffer, sizeof(date_buffer), "%Y-%m-%d", tick_time);
   }
-  
+
   if (clock_is_24h_style() == true) {
     strftime(time_buffer, sizeof(time_buffer), "%H:%M:%S", tick_time);
   } else {
@@ -57,10 +56,8 @@ static void on_battery_state_change(BatteryChargeState charge) {
   static char buffer[] = "100%CP";
   int l;
   
-  snprintf(buffer, sizeof(buffer), "%d", charge.charge_percent);
+  snprintf(buffer, sizeof(buffer) - 2, "%d%%", charge.charge_percent);
   l = strlen(buffer);
-  buffer[l++] = '%';
-  buffer[l] = '\0';
   if (charge.is_charging) {
     buffer[l++] = 'C';
     buffer[l] = '\0';
@@ -77,15 +74,25 @@ static void main_window_load(Window *window) {
   static BatteryChargeState battery_state;
 
   minute_when_last_updated = -1;
+
+  /*   0 [       90%] */
+  /*  20 [          ] */
+  /*  40 [THURSDAY  ] */
+  /*  60 [2014-08-22] */
+  /*  80 [          ] */
+  /* 100 [ 19:55:23 ] */
+  /* 120 [ 19:55:23 ] */
+  /* 140 [          ] */
   
   /*                                     x   y   wid  ht */
-  s_dow_layer  = text_layer_create(GRect( 2, 35,  56, 20));
-  s_batt_layer = text_layer_create(GRect(58, 35,  84, 20));
-  s_date_layer = text_layer_create(GRect( 2, 55, 140, 20));
+  /*                                     --  --  ---  -- */
+  s_dow_layer  = text_layer_create(GRect( 2, 40, 140, 20));
+  s_batt_layer = text_layer_create(GRect( 2,  0, 140, 20));
+  s_date_layer = text_layer_create(GRect( 2, 60, 140, 20));
   if (clock_is_24h_style() == true) {
-    s_time_layer = text_layer_create(GRect(2, 85, 140, 40));
+    s_time_layer = text_layer_create(GRect(0, 100, 144, 40));
   } else {
-    s_time_layer = text_layer_create(GRect(0, 85, 144, 40));
+    s_time_layer = text_layer_create(GRect(0, 100, 144, 40));
   }
 
   text_layer_set_background_color(s_dow_layer, GColorBlack);
@@ -100,10 +107,11 @@ static void main_window_load(Window *window) {
   //text_layer_set_text(s_time_layer, "00:00");
   //text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
 
-  s_small_font  = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_16));
+  s_small_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_16));
   s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
 
   text_layer_set_font(s_dow_layer,  s_small_font);
+  //  text_layer_set_font(s_batt_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_font(s_batt_layer, s_small_font);
   text_layer_set_font(s_date_layer, s_small_font);
   text_layer_set_font(s_time_layer, s_large_font);
