@@ -9,13 +9,13 @@
     "resources": {
         "media": [
             {
-                "characterRegex": "[--:A-Z]",
+                "characterRegex": "[--:A-Z% ]",
                 "file": "fonts/DotMatrixNumberOne.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_16",
                 "type": "font"
             },
             {
-                "characterRegex": "[--:A-Z]",
+                "characterRegex": "[--:A-Z% ]",
                 "file": "fonts/DotMatrixNumberOne-Condensed.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32",
                 "type": "font"
