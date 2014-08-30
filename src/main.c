@@ -13,6 +13,7 @@ static GFont     s_large_font;
 
 static int minute_when_last_updated;
 
+
 static void update_time() {
   unsigned int i;
   unsigned int j;
@@ -68,6 +69,11 @@ static void on_battery_state_change(BatteryChargeState charge) {
   text_layer_set_text(s_batt_layer, buffer);
 }
 
+#define PERSIST_BLACK_ON_WHITE 0
+static GColor fg;
+static GColor bg;
+static bool black_on_white;
+
 static void main_window_load(Window *window) {
 
   static BatteryChargeState battery_state;
@@ -94,14 +100,14 @@ static void main_window_load(Window *window) {
     s_time_layer = text_layer_create(GRect(0, 100, 144, 40));
   }
 
-  text_layer_set_background_color(s_dow_layer, GColorBlack);
-  text_layer_set_text_color(s_dow_layer, GColorClear);
-  text_layer_set_background_color(s_batt_layer, GColorBlack);
-  text_layer_set_text_color(s_batt_layer, GColorClear);
-  text_layer_set_background_color(s_date_layer, GColorBlack);
-  text_layer_set_text_color(s_date_layer, GColorClear);
-  text_layer_set_background_color(s_time_layer, GColorBlack);
-  text_layer_set_text_color(s_time_layer, GColorClear);
+  text_layer_set_background_color(s_dow_layer, bg);
+  text_layer_set_text_color(s_dow_layer, fg);
+  text_layer_set_background_color(s_batt_layer, bg);
+  text_layer_set_text_color(s_batt_layer, fg);
+  text_layer_set_background_color(s_date_layer, bg);
+  text_layer_set_text_color(s_date_layer, fg);
+  text_layer_set_background_color(s_time_layer, bg);
+  text_layer_set_text_color(s_time_layer, fg);
 
   //text_layer_set_text(s_time_layer, "00:00");
   //text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
@@ -147,8 +153,19 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void init() {
+
+  if (!persist_exists(PERSIST_BLACK_ON_WHITE)) {
+    black_on_white = 0;
+  } else {
+    black_on_white = !persist_read_bool(PERSIST_BLACK_ON_WHITE);
+  }
+  persist_write_bool(PERSIST_BLACK_ON_WHITE, black_on_white);
+
+  fg = black_on_white ? GColorBlack : GColorWhite;
+  bg = black_on_white ? GColorWhite : GColorBlack;
+
   s_main_window = window_create();
-  window_set_background_color(s_main_window, GColorBlack);
+  window_set_background_color(s_main_window, bg);
   window_set_window_handlers(s_main_window, (WindowHandlers) {
     .load   = main_window_load,
     .unload = main_window_unload
