@@ -17,16 +17,21 @@ static bool      enabled;
 
 static int minute_when_last_updated;
 
-#define PERSIST_BLACK_ON_WHITE 0
-#define PERSIST_SHOW_DATE 1
-#define PERSIST_SHOW_BATTERY 2
+/* options --- these macros are used as parameters for both persist
+   keys and config keys. */
+#define OPTION_BLACK_ON_WHITE    0
+#define OPTION_SHOW_DATE         1
+#define OPTION_SHOW_BATTERY      2
+#define OPTION_LARGER_CLOCK_FONT 3
 
 static GColor fg;
 static GColor bg;
 
+/* options */
 static bool black_on_white;
 static bool show_date;
 static bool show_battery;
+static bool larger_clock_font;
 
 static void update_time() {
   unsigned int i;
@@ -115,9 +120,14 @@ static void main_window_load(Window *window) {
   if (show_date) {
     vpos_dow  = vpos; vpos += 20;
     vpos_date = vpos; vpos += 20;
-    vpos += 20;
+    vpos += 20;			/* for space between date and time */
   }
-  vpos_time = vpos; vpos += 40;	
+
+  if (larger_clock_font) {
+    vpos_time = vpos; vpos += 80;
+  } else {
+    vpos_time = vpos; vpos += 40;	
+  }
   
   vmove = vcenter - ((vtop + vpos) / 2); 
   
@@ -141,10 +151,10 @@ static void main_window_load(Window *window) {
     s_date_layer = text_layer_create(GRect( 2, vpos_date, 140, 20));
   }
   
-  if (clock_is_24h_style() == true) {
+  if (larger_clock_font) {
     s_time_layer = text_layer_create(GRect(0, vpos_time, 144, 40));
   } else {
-    s_time_layer = text_layer_create(GRect(0, vpos_time, 144, 40));
+    s_time_layer = text_layer_create(GRect(0, vpos_time, 144, 80));
   }
   
   if (show_battery) {
@@ -170,7 +180,11 @@ static void main_window_load(Window *window) {
   }
   
   has_large_font = 1;
-  s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
+  if (larger_clock_font) {
+    s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_64));
+  } else {
+    s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
+  }
   
   if (show_battery) {
     text_layer_set_font(s_batt_layer, s_small_font);
@@ -239,10 +253,6 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
 }
 
-#define KEY_CONFIG_BLACK_ON_WHITE 0
-#define KEY_CONFIG_SHOW_DATE 1
-#define KEY_CONFIG_SHOW_BATTERY 2
-
 static void message_handler(DictionaryIterator *received, void *context) {
 
   bool bool_value;
@@ -250,41 +260,35 @@ static void message_handler(DictionaryIterator *received, void *context) {
 
   app_log(APP_LOG_LEVEL_INFO, __FILE__, __LINE__, "this is message_handler");
 
-  Tuple *tuple_black_on_white = dict_find(received, KEY_CONFIG_BLACK_ON_WHITE);
-  Tuple *tuple_show_date      = dict_find(received, KEY_CONFIG_SHOW_DATE);
-  Tuple *tuple_show_battery   = dict_find(received, KEY_CONFIG_SHOW_BATTERY);
+  /* options */
+  Tuple *tuple_black_on_white    = dict_find(received, OPTION_BLACK_ON_WHITE);
+  Tuple *tuple_show_date         = dict_find(received, OPTION_SHOW_DATE);
+  Tuple *tuple_show_battery      = dict_find(received, OPTION_SHOW_BATTERY);
+  Tuple *tuple_larger_clock_font = dict_find(received, OPTION_LARGER_CLOCK_FONT);
 
+  /* options */
   if (tuple_black_on_white) {
-    app_log(APP_LOG_LEVEL_INFO, __FILE__, __LINE__,
-	    "tuple_black_on_white type %d length %d key %d",
-	    (int)tuple_black_on_white->type,
-	    (int)tuple_black_on_white->length,
-	    (int)tuple_black_on_white->key);
     refresh_window = 1;
     black_on_white = (bool)tuple_black_on_white->value->int32;
   }
   if (tuple_show_date) {
-    app_log(APP_LOG_LEVEL_INFO, __FILE__, __LINE__,
-	    "tuple_show_date type %d length %d key %d",
-	    (int)tuple_show_date->type,
-	    (int)tuple_show_date->length,
-	    (int)tuple_show_date->key);
     refresh_window = 1;
     show_date = (bool)tuple_show_date->value->int32;
   }
   if (tuple_show_battery) {
-    app_log(APP_LOG_LEVEL_INFO, __FILE__, __LINE__,
-	    "tuple_show_battery type %d length %d key %d",
-	    (int)tuple_show_battery->type,
-	    (int)tuple_show_battery->length,
-	    (int)tuple_show_battery->key);
     refresh_window = 1;
     show_battery = (bool)tuple_show_battery->value->int32;
   }
+  if (tuple_larger_clock_font) {
+    refresh_window = 1;
+    larger_clock_font = (bool)tuple_larger_clock_font->value->int32;
+  }
 
-  persist_write_bool(PERSIST_BLACK_ON_WHITE, black_on_white);
-  persist_write_bool(PERSIST_SHOW_DATE,      show_date);
-  persist_write_bool(PERSIST_SHOW_BATTERY,   show_battery);
+  /* options */
+  persist_write_bool(OPTION_BLACK_ON_WHITE, black_on_white);
+  persist_write_bool(OPTION_SHOW_DATE,      show_date);
+  persist_write_bool(OPTION_SHOW_BATTERY,   show_battery);
+  persist_write_bool(OPTION_LARGER_CLOCK_FONT, larger_clock_font);
 
   if (refresh_window) {
     main_window_unload(s_main_window);
@@ -294,18 +298,24 @@ static void message_handler(DictionaryIterator *received, void *context) {
 
 static void init() {
 
-  black_on_white = 1;
-  show_date      = 1;
-  show_battery   = 1;
+  /* options */
+  black_on_white    = 0;
+  show_date         = 1;
+  show_battery      = 1;
+  larger_clock_font = 0;
 
-  if (persist_exists(PERSIST_BLACK_ON_WHITE)) {
-    black_on_white = persist_read_bool(PERSIST_BLACK_ON_WHITE);
+  /* options */
+  if (persist_exists(OPTION_BLACK_ON_WHITE)) {
+    black_on_white = persist_read_bool(OPTION_BLACK_ON_WHITE);
   }
-  if (persist_exists(PERSIST_SHOW_DATE)) {
-    show_date = persist_read_bool(PERSIST_SHOW_DATE);
+  if (persist_exists(OPTION_SHOW_DATE)) {
+    show_date = persist_read_bool(OPTION_SHOW_DATE);
   }
-  if (persist_exists(PERSIST_SHOW_BATTERY)) {
-    show_battery = persist_read_bool(PERSIST_SHOW_BATTERY);
+  if (persist_exists(OPTION_SHOW_BATTERY)) {
+    show_battery = persist_read_bool(OPTION_SHOW_BATTERY);
+  }
+  if (persist_exists(OPTION_LARGER_CLOCK_FONT)) {
+    larger_clock_font = persist_read_bool(OPTION_LARGER_CLOCK_FONT);
   }
 
   s_main_window = window_create();
