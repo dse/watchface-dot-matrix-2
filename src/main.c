@@ -282,6 +282,10 @@ static void message_handler(DictionaryIterator *received, void *context) {
     show_battery = (bool)tuple_show_battery->value->int32;
   }
 
+  persist_write_bool(PERSIST_BLACK_ON_WHITE, black_on_white);
+  persist_write_bool(PERSIST_SHOW_DATE,      show_date);
+  persist_write_bool(PERSIST_SHOW_BATTERY,   show_battery);
+
   if (refresh_window) {
     main_window_unload(s_main_window);
     main_window_load(s_main_window);

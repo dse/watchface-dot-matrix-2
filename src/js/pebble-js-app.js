@@ -6,6 +6,7 @@
 
 (function() {
 
+	// ENTRY POINT
 	function showConfiguration() {
 		console.log("This is showConfiguration.");
 
@@ -15,6 +16,10 @@
 		var blackOnWhite = localStorage.getItem("blackOnWhite");
 		var showDate     = localStorage.getItem("showDate");
 		var showBattery  = localStorage.getItem("showBattery");
+
+		console.log("showConfiguration(): from localStorage, blackOnWhite = " + JSON.stringify(blackOnWhite));
+		console.log("showConfiguration(): from localStorage, showDate = " + JSON.stringify(showDate));
+		console.log("showConfiguration(): from localStorage, showBattery = " + JSON.stringify(showBattery));
 
 		if (blackOnWhite !== null) {
 			q.push("blackOnWhite=" + encodeURIComponent(blackOnWhite));
@@ -29,11 +34,13 @@
 			url = url + "?" + q.join("&");
 		}
 
+		console.log("showConfiguration(): going to " + JSON.stringify(url));
 		Pebble.openURL(url);
 	}
 
 	function setConfigFrom(o) {
 		console.log("This is setConfigFrom.");
+		console.log("    o = " + JSON.stringify(o));
 
 		localStorage.setItem("blackOnWhite", o.blackOnWhite);
 		localStorage.setItem("showDate",     o.showDate);
