@@ -70,7 +70,10 @@
 
 		</div>
 
-		<script src="config.js?24"></script>
+		<script>
+			document.write('<script src="config.js?%d"></script>'.
+			               replace(/%d/, new Date().getTime()));
+		</script>
 
 	</body>
 </html>
