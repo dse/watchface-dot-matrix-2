@@ -1,7 +1,8 @@
-/*jslint browser: true, sloppy: true */
+/*jslint browser: true, sloppy: true, white: true, vars: true */
 //-----------------------------------------------------------------------------
 // Lines above are for jslint, the JavaScript verifier.  http://www.jslint.com/
 //-----------------------------------------------------------------------------
+/*global jQuery */
 
 function console_log() {
 	var $ = jQuery;
@@ -10,15 +11,6 @@ function console_log() {
 		$("#console_log").append($("<div></div>").text(arguments[i]));
 	}
 }
-
-console_log("This is config.js.  location.href = " + JSON.stringify(location.href));
-
-(function($) {
-	console_log("This is an anonymous function executed via (function($) { ... }(jQuery)).");
-	$(document).ready(function($) {
-		console_log("This is an anonymous function, executed via $(document).ready(...).");
-	});
-}(jQuery));
 
 var CONFIG_OPTIONS = [
 	{ name: "blackOnWhite",    type: "boolean" },
@@ -32,7 +24,7 @@ jQuery(function($) {
 
 	var $form = $("form.configForm");
 
-	var $cb;
+	var $cb = {};
 	CONFIG_OPTIONS.forEach(function(option) {
 		if (option.type === "boolean") {
 			$cb[option.name] = $form.find(":checkbox[name='" + option.name + "']");
@@ -58,10 +50,9 @@ jQuery(function($) {
 		if (match) {
 			console_log("config.js param(): match = " + JSON.stringify(match));
 			return match[1];
-		} else {
-			console_log("config.js param(): no match.");
-			return null;
 		}
+		console_log("config.js param(): no match.");
+		return null;
 	}
 
 	$b_cancel.click(function() {
