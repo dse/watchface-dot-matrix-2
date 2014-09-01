@@ -19,7 +19,13 @@
                 "file": "fonts/DotMatrixNumberOne-Condensed.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32",
                 "type": "font"
-            }
+            },
+            {
+                "characterRegex": "[--:A-Z% ]",
+                "file": "fonts/DotMatrixNumberOneDotted-Semicondensed.ttf",
+                "name": "FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_64",
+                "type": "font"
+            },
         ]
     },
     "shortName": "Dot Matrix #1",
