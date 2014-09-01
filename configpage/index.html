@@ -71,8 +71,7 @@
 		</div>
 
 		<script>
-			document.write('<script src="config.js?%d"></script>'.
-			               replace(/%d/, new Date().getTime()));
+			document.write('\x3cscript src="config.js?%d"\x3e\x3c/script\x3e'.replace(/%d/, new Date().getTime()));
 		</script>
 
 	</body>
