@@ -21,12 +21,13 @@ static bool      enabled;
 
 static int       minute_when_last_updated;
 
+#if LARGER_CLOCK_BITMAP
 #define LARGER_CLOCK_FONT_ICONS 14
-
 static GBitmap     *larger_clock_font_icons;
 static GBitmap     *larger_clock_font_icon[LARGER_CLOCK_FONT_ICONS];
 static BitmapLayer *s_larger_clock_bitmap_layer[8];
 static InverterLayer *s_larger_clock_inverter_layer[8];
+#endif
 
 /* options --- these macros are used as parameters for both persist
    keys and config keys. */
@@ -86,16 +87,16 @@ static void update_time() {
   }
 
   if (larger_clock_font) {
-    if (LARGER_CLOCK_BITMAP) {
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[0], larger_clock_font_icon[time_buffer[0] - '0']);
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[1], larger_clock_font_icon[time_buffer[1] - '0']);
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[3], larger_clock_font_icon[time_buffer[3] - '0']);
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[4], larger_clock_font_icon[time_buffer[4] - '0']);
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[6], larger_clock_font_icon[time_buffer[6] - '0']);
-      bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[7], larger_clock_font_icon[time_buffer[7] - '0']);
-    } else {
-      text_layer_set_text(s_time_text_layer, time_buffer);
-    }
+#if LARGER_CLOCK_BITMAP
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[0], larger_clock_font_icon[time_buffer[0] - '0']);
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[1], larger_clock_font_icon[time_buffer[1] - '0']);
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[3], larger_clock_font_icon[time_buffer[3] - '0']);
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[4], larger_clock_font_icon[time_buffer[4] - '0']);
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[6], larger_clock_font_icon[time_buffer[6] - '0']);
+    bitmap_layer_set_bitmap(s_larger_clock_bitmap_layer[7], larger_clock_font_icon[time_buffer[7] - '0']);
+#else
+    text_layer_set_text(s_time_text_layer, time_buffer);
+#endif
   } else {
     text_layer_set_text(s_time_text_layer, time_buffer);
   }
@@ -153,11 +154,11 @@ static void main_window_load(Window *window) {
   }
 
   if (larger_clock_font) {
-    if (LARGER_CLOCK_BITMAP) {
-      vpos_time = vpos; vpos += 27;
-    } else {
-      vpos_time = vpos; vpos += 32;
-    }
+#if LARGER_CLOCK_BITMAP
+    vpos_time = vpos; vpos += 27;
+#else
+    vpos_time = vpos; vpos += 32;
+#endif
   } else {
     vpos_time = vpos; vpos += 32;
   }
@@ -185,11 +186,11 @@ static void main_window_load(Window *window) {
   }
   
   if (larger_clock_font) {
-    if (LARGER_CLOCK_BITMAP) {
-      s_time_text_layer = NULL;
-    } else {
-      s_time_text_layer = text_layer_create(GRect(0, vpos_time, 144, 32));
-    }
+#if LARGER_CLOCK_BITMAP
+    s_time_text_layer = NULL;
+#else
+    s_time_text_layer = text_layer_create(GRect(0, vpos_time, 144, 32));
+#endif
   } else {
     s_time_text_layer = text_layer_create(GRect(0, vpos_time, 144, 32));
   }
@@ -210,11 +211,10 @@ static void main_window_load(Window *window) {
     text_layer_set_background_color(s_time_text_layer, bg);
     text_layer_set_text_color(s_time_text_layer, fg);
   } else {
-    if (LARGER_CLOCK_BITMAP) {
-    } else {
-      text_layer_set_background_color(s_time_text_layer, bg);
-      text_layer_set_text_color(s_time_text_layer, fg);
-    }
+#if !LARGER_CLOCK_BITMAP
+    text_layer_set_background_color(s_time_text_layer, bg);
+    text_layer_set_text_color(s_time_text_layer, fg);
+#endif
   }
   
   if (show_battery || show_date) {
@@ -226,12 +226,12 @@ static void main_window_load(Window *window) {
   
   has_large_font = 1;
   if (larger_clock_font) {
-    if (LARGER_CLOCK_BITMAP) {
-      has_large_font = 0;		/* not using a font */
-      s_large_font = NULL;
-    } else {
-      s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_32));
-    }
+#if LARGER_CLOCK_BITMAP
+    has_large_font = 0;		/* not using a font */
+    s_large_font = NULL;
+#else
+    s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_32));
+#endif
   } else {
     s_large_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32));
   }
@@ -256,16 +256,15 @@ static void main_window_load(Window *window) {
     text_layer_set_text_alignment(s_time_text_layer, GTextAlignmentCenter);
     layer_add_child(window_get_root_layer(s_main_window), text_layer_get_layer(s_time_text_layer));
   } else {
-    if (LARGER_CLOCK_BITMAP) {
-    } else {
-      text_layer_set_font(s_time_text_layer, s_large_font);
-      text_layer_set_text_alignment(s_time_text_layer, GTextAlignmentCenter);
-      layer_add_child(window_get_root_layer(s_main_window), text_layer_get_layer(s_time_text_layer));
-    }
+#if !LARGER_CLOCK_BITMAP
+    text_layer_set_font(s_time_text_layer, s_large_font);
+    text_layer_set_text_alignment(s_time_text_layer, GTextAlignmentCenter);
+    layer_add_child(window_get_root_layer(s_main_window), text_layer_get_layer(s_time_text_layer));
+#endif
   }
   
   if (larger_clock_font) {
-    if (LARGER_CLOCK_BITMAP) {
+#if LARGER_CLOCK_BITMAP
       larger_clock_font_icons = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_LARGER_CLOCK_FONT);
 
       /*                                                                                                     1         1         1         1         1    */
@@ -331,11 +330,11 @@ static void main_window_load(Window *window) {
 	layer_add_child(window_get_root_layer(s_main_window), inverter_layer_get_layer(s_larger_clock_inverter_layer[6]));
 	layer_add_child(window_get_root_layer(s_main_window), inverter_layer_get_layer(s_larger_clock_inverter_layer[7]));
       }
-    } else {
-      larger_clock_font_icons = NULL;
-    }
+#endif
   } else {
+#if LARGER_CLOCK_BITMAP
     larger_clock_font_icons = NULL;
+#endif
   }
   
   update_time();
@@ -380,33 +379,32 @@ static void main_window_unload(Window *window) {
     fonts_unload_custom_font(s_large_font);
     has_large_font = 0;
   }
-  if (larger_clock_font_icons) {
 
+#if LARGER_CLOCK_BITMAP
+  if (larger_clock_font_icons) {
     gbitmap_destroy(larger_clock_font_icons);
     larger_clock_font_icons = NULL;
-
     for (i = 0; i < LARGER_CLOCK_FONT_ICONS; i += 1) {
       if (larger_clock_font_icon[i]) {
     	gbitmap_destroy(larger_clock_font_icon[i]);
     	larger_clock_font_icon[i] = NULL;
       }
     }
-
     for (i = 0; i < 8; i += 1) {
       if (s_larger_clock_bitmap_layer[i]) {
     	bitmap_layer_destroy(s_larger_clock_bitmap_layer[i]);
       }
       s_larger_clock_bitmap_layer[i] = NULL;
     }
-
     for (i = 0; i < 8; i += 1) {
       if (s_larger_clock_inverter_layer[i]) {
     	inverter_layer_destroy(s_larger_clock_inverter_layer[i]);
       }
       s_larger_clock_inverter_layer[i] = NULL;
     }
-
   }
+#endif 
+
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -505,6 +503,7 @@ static void deinit() {
 int main(void) {
   int i;
 
+#if LARGER_CLOCK_BITMAP
   larger_clock_font_icons = NULL;
   for (i = 0; i < LARGER_CLOCK_FONT_ICONS; i += 1) {
     larger_clock_font_icon[i] = NULL;
@@ -515,6 +514,7 @@ int main(void) {
   for (i = 0; i < 8; i += 1) {
     s_larger_clock_inverter_layer[i] = NULL;
   }
+#endif
 
   enabled = 0;
 
