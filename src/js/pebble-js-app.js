@@ -4,6 +4,13 @@
 // Lines above are for jslint, the JavaScript verifier.  http://www.jslint.com/
 //-----------------------------------------------------------------------------
 
+var CONFIG_OPTIONS = [
+	{ name: "blackOnWhite",    type: "boolean" },
+	{ name: "showDate",        type: "boolean" },
+	{ name: "showBattery",     type: "boolean" },
+	{ name: "largerClockFont", type: "boolean" }
+];
+
 (function() {
 
 	// ENTRY POINT
@@ -12,24 +19,18 @@
 
 		var url = "http://webonastick.com/watchfaces/dot-matrix-1/config/";
 		var q = [];
+
+		var options = {};
+		CONFIG_OPTIONS.forEach(function(option) {
+			options[option.name] = localStorage.getItem(option.name);
+		});
+
+		CONFIG_OPTIONS.forEach(function(option) {
+			if (options[option.name] !== null) {
+				q.push(option.name + "=" + encodeURIComponent(options[option.name]));
+			}
+		});
 		
-		var blackOnWhite = localStorage.getItem("blackOnWhite");
-		var showDate     = localStorage.getItem("showDate");
-		var showBattery  = localStorage.getItem("showBattery");
-
-		console.log("showConfiguration(): from localStorage, blackOnWhite = " + JSON.stringify(blackOnWhite));
-		console.log("showConfiguration(): from localStorage, showDate = " + JSON.stringify(showDate));
-		console.log("showConfiguration(): from localStorage, showBattery = " + JSON.stringify(showBattery));
-
-		if (blackOnWhite !== null) {
-			q.push("blackOnWhite=" + encodeURIComponent(blackOnWhite));
-		}
-		if (showDate !== null) {
-			q.push("showDate=" + encodeURIComponent(showDate));
-		}
-		if (showBattery !== null) {
-			q.push("showBattery=" + encodeURIComponent(showBattery));
-		}
 		if (q.length) {
 			url = url + "?" + q.join("&");
 		}
@@ -42,14 +43,13 @@
 		console.log("This is setConfigFrom.");
 		console.log("    o = " + JSON.stringify(o));
 
-		localStorage.setItem("blackOnWhite", o.blackOnWhite);
-		localStorage.setItem("showDate",     o.showDate);
-		localStorage.setItem("showBattery",  o.showBattery);
-		Pebble.sendAppMessage({
-			0: o.blackOnWhite,
-			1: o.showDate,
-			2: o.showBattery
+		var message = {}, index = 0;
+		CONFIG_OPTIONS.forEach(function(option) {
+			localStorage.setItem(option.name, o[option.name]);
+			message[index] = o[option.name];
+			index += 1;
 		});
+		Pebble.sendAppMessage(message);
 	}
 
 	function configurationClosed(e) {

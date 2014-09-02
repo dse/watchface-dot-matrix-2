@@ -20,7 +20,7 @@ var CONFIG_OPTIONS = [
 ];
 
 jQuery(function($) {
-	console_log("This is config.js's ready handler, executed via jQuery(function($) { ... }).");
+	//console_log("This is config.js's ready handler, executed via jQuery(function($) { ... }).");
 
 	var $form = $("form.configForm");
 
@@ -39,19 +39,20 @@ jQuery(function($) {
 		CONFIG_OPTIONS.forEach(function(option) {
 			result[option.name] = $cb[option.name].is(":checked") ? true : false;
 		});
+		//console_log("saveOptions(): result = " + JSON.stringify(result));
 		return result;
 	}
 
 	function param(name) {
 		var rx = new RegExp("(?:^|\\?|\\&)" + name + "=(.*?)(?:$|\\&)");
 		var match = rx.exec(location.search);
-		console_log("config.js param(): location.search = " + JSON.stringify(location.search));
-		console_log("config.js param(): rx = " + JSON.stringify(rx));
+		//console_log("config.js param(): location.search = " + JSON.stringify(location.search));
+		//console_log("config.js param(): rx = " + JSON.stringify(rx));
 		if (match) {
-			console_log("config.js param(): match = " + JSON.stringify(match));
+			//console_log("config.js param(): match = " + JSON.stringify(match));
 			return match[1];
 		}
-		console_log("config.js param(): no match.");
+		//console_log("config.js param(): no match.");
 		return null;
 	}
 

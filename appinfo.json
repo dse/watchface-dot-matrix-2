@@ -9,29 +9,34 @@
     "resources": {
         "media": [
             {
-                "characterRegex": "[--:A-Z% ]",
+                "characterRegex": "[--/0-9:A-Z% ]",
                 "file": "fonts/DotMatrixNumberOne.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_16",
                 "type": "font"
             },
             {
-                "characterRegex": "[--:A-Z% ]",
+                "characterRegex": "[--/0-9:A-Z% ]",
                 "file": "fonts/DotMatrixNumberOne-Condensed.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_32",
                 "type": "font"
             },
             {
-                "characterRegex": "[--:A-Z% ]",
+                "characterRegex": "[--/0-9:A-Z% ]",
                 "file": "fonts/DotMatrixNumberOneDotted-Semicondensed.ttf",
-                "name": "FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_64",
+                "name": "FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_32",
                 "type": "font"
+            },
+            {
+                "type": "png",
+                "name": "IMAGE_LARGER_CLOCK_FONT",
+                "file": "images/larger_clock_font.png"
             }
         ]
     },
     "shortName": "Dot Matrix #1",
     "uuid": "13d42c87-c835-40aa-855e-a883def03daa",
-    "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionCode": 2,
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": true
     }
