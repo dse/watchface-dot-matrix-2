@@ -1,6 +1,8 @@
 #include <pebble.h>
 #include <ctype.h>
 
+#include "main.h"
+
 #define app__log(a) app_log(APP_LOG_LEVEL_INFO, __FILE__, __LINE__, a);
 
 static Window    *s_main_window;
@@ -241,10 +243,12 @@ static void main_window_unload(Window *window) {
   if (has_small_font) {
     fonts_unload_custom_font(s_small_font);
     has_small_font = 0;
+    s_small_font = NULL;
   }
   if (has_large_font) {
     fonts_unload_custom_font(s_large_font);
     has_large_font = 0;
+    s_large_font = NULL;
   }
 
 }
@@ -339,14 +343,13 @@ static void init() {
 
 static void deinit() {
   app_message_deregister_callbacks();
+  tick_timer_service_unsubscribe();
+  window_stack_pop(true);
   window_destroy(s_main_window);
 }
 
 int main(void) {
-  int i;
-
   enabled = 0;
-
   init();
   app_event_loop();
   deinit();
