@@ -301,8 +301,25 @@ static void message_handler(DictionaryIterator *received, void *context) {
 
   if (refresh_window) {
     main_window_unload(s_main_window);
+    main_window_destroy();
+    main_window_create();
     main_window_load(s_main_window);
   }
+}
+
+static void main_window_create() {
+  s_main_window = window_create();
+  window_set_background_color(s_main_window, bg);
+  window_set_window_handlers(s_main_window, (WindowHandlers) {
+    .load   = main_window_load,
+    .unload = main_window_unload
+  });
+  window_stack_push(s_main_window, true);
+}
+
+static void main_window_destroy() {
+  window_stack_pop(true);
+  window_destroy(s_main_window);
 }
 
 static void init() {
@@ -327,15 +344,8 @@ static void init() {
     larger_clock_font = persist_read_bool(OPTION_LARGER_CLOCK_FONT);
   }
 
-  s_main_window = window_create();
-  window_set_background_color(s_main_window, bg);
-  window_set_window_handlers(s_main_window, (WindowHandlers) {
-    .load   = main_window_load,
-    .unload = main_window_unload
-  });
-  window_stack_push(s_main_window, true);
+  main_window_create();
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
-  
   app_message_open(app_message_inbox_size_maximum(),
 		   app_message_outbox_size_maximum());
   app_message_register_inbox_received(message_handler);
@@ -344,8 +354,7 @@ static void init() {
 static void deinit() {
   app_message_deregister_callbacks();
   tick_timer_service_unsubscribe();
-  window_stack_pop(true);
-  window_destroy(s_main_window);
+  main_window_destroy();
 }
 
 int main(void) {
