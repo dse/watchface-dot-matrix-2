@@ -6,8 +6,6 @@
 
 var CONFIG_OPTIONS = [
 	{ name: "blackOnWhite",    type: "boolean" },
-	{ name: "showDate",        type: "boolean" },
-	{ name: "showBattery",     type: "boolean" },
 	{ name: "largerClockFont", type: "boolean" }
 ];
 
@@ -17,7 +15,7 @@ var CONFIG_OPTIONS = [
 	function showConfiguration() {
 		console.log("This is showConfiguration.");
 
-		var url = "http://webonastick.com/watchfaces/dot-matrix-1/config/";
+		var url = "http://webonastick.com/watchfaces/dot-matrix-2/config/";
 		var q = [];
 
 		var options = {};
