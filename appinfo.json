@@ -4,14 +4,14 @@
         "configurable"
     ],
     "companyName": "Darren Embry",
-    "longName": "Dot Matrix Watchface #1",
+    "longName": "Dot Matrix Watchface #2",
     "projectType": "native",
     "resources": {
         "media": [
             {
                 "characterRegex": "[--/0-9:A-Z% ]",
-                "file": "fonts/DotMatrixNumberOne.ttf",
-                "name": "FONT_DOT_MATRIX_NUMBER_ONE_16",
+                "file": "fonts/DotMatrixNumberOne-1x2.ttf",
+                "name": "FONT_DOT_MATRIX_NUMBER_ONE_CONDENSED_16",
                 "type": "font"
             },
             {
@@ -25,18 +25,13 @@
                 "file": "fonts/DotMatrixNumberOneDotted-Semicondensed.ttf",
                 "name": "FONT_DOT_MATRIX_NUMBER_ONE_DOTTED_SEMICONDENSED_32",
                 "type": "font"
-            },
-            {
-                "type": "png",
-                "name": "IMAGE_LARGER_CLOCK_FONT",
-                "file": "images/larger_clock_font.png"
             }
         ]
     },
-    "shortName": "Dot Matrix #1",
-    "uuid": "13d42c87-c835-40aa-855e-a883def03daa",
-    "versionCode": 2,
-    "versionLabel": "1.1",
+    "shortName": "Dot Matrix #2",
+    "uuid": "37e8e459-36eb-4bc7-a2e8-47ce68caa2a9",
+    "versionCode": 1,
+    "versionLabel": "1.0",
     "watchapp": {
         "watchface": true
     }
