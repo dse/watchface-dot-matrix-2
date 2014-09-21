@@ -14,8 +14,6 @@ function console_log() {
 
 var CONFIG_OPTIONS = [
 	{ name: "blackOnWhite",    type: "boolean" },
-	{ name: "showDate",        type: "boolean" },
-	{ name: "showBattery",     type: "boolean" },
 	{ name: "largerClockFont", type: "boolean" }
 ];
 
